@@ -1,0 +1,27 @@
+FROM golang:alpine as builder
+
+WORKDIR /app
+
+COPY . .
+
+RUN CGO_ENABLED=0 go build -o dist/go-short
+
+FROM golang:alpine as runner
+
+# RUN apk add --update npm
+
+WORKDIR /app
+# RUN mkdir server
+# RUN mkdir client
+
+# COPY client client/
+COPY --from=builder /app/dist/go-short .
+RUN chmod +x ./go-short
+
+# RUN npm install --prefix ./client
+# RUN npm run build --prefix ./client
+
+EXPOSE 8000
+
+CMD ./go-short
+
